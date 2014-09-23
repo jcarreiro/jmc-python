@@ -1,14 +1,16 @@
+# bulb_drop.py
+#
 # Bulb dropping puzzle, as seen on http://qntm.org/bulbs:
 #
 #   The problem
 #
-#   You have a 100-story building and 2 identical, supposedly-unbreakable
+#   You have a 100-storey building and 2 identical, supposedly-unbreakable
 #   light bulbs. You know for a fact that if you drop a bulb at floor 0 (i.e.
 #   ground level), the bulb will not break. You also know for a fact that if
 #   you drop a bulb at floor 101 (i.e. go to the roof and throw it off), the
 #   bulb will definitely break. In fact, there is some floor f with 0 <= f <=
 #   100 such that if you drop a bulb at floor f or lower it will not break,
-#   and if you drop it at floor f+1 or higher, it will definitely break. You
+#   and if you drop it at floor f+1 or higher, it will definitely break.You
 #   have only 2 light bulbs. Once they are both broken, there are no more.
 #   Assume that dropping a bulb multiple times does not weaken it. How many
 #   bulb drops must be performed to find f, in the worst-case scenario?

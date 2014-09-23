@@ -21,46 +21,25 @@ import random
 from jmc.decorators import countcalls, memoized
 
 # -----------------------------------------------------------------------------
-# Permutations
+# Anagrams
 #
 # Question
 # --------
-# Given a string, "generate" all of the permutations of the string.
+# Given a string, "generate" all of the anagrams (aka permutations) of the
+# string.
 #
 # Solution
 # --------
 # This is a straightforward tree-recursive problem with a simple solution.
 # -----------------------------------------------------------------------------
-def permutations(s):
-    def permutations_helper(s, t):
+def anagrams(s):
+    def anagram_helper(s, t):
         if len(s) == 0:
-            yield t
+            print t # or, yield t
         else:
             for c in s:
-                for p in permutations_helper(s - set(c), t + c):
-                    yield p
-    for p in permutations_helper(set(s), ''):
-        yield p
-
-# More than one candidate has given me this "solution". Since it only prints
-# n^2 strings and there are n! permutations, it can't possibly be correct...
-def permutations_wrong(s):
-    for i in xrange(len(s)):
-        c = s[i]
-        t = s[0:i] + s[i + 1:]
-        for j in xrange(len(t) + 1):
-            yield t[0:j] + c + t[j:]
-
-# This version returns a list -- which is bad idea, since the number of list
-# entries grows as O(n!).
-def permutations_list(s):
-    if len(s) == 1:
-        return [s]
-    l = []
-    for i in xrange(len(s)):
-        for p in permutations_list(s[0:i] + s[i+1:]):
-            l += [s[i] + p]
-    return l
+                anagram_helper(s - set(c), t + c)
+    anagram_helper(set(s), '')
 
 # ------------------------------------------------------------------------------
 # Towers of Hanoi

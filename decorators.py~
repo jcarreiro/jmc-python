@@ -1,0 +1,17 @@
+# Memoizes a function. From wiki.python.org/moin/PythonDecoratorLibrary.
+class memoized(object):
+    def __init__(self, f):
+        self.f = f
+        self.cache = {}
+
+    def __call__(self, *args):
+        try:
+            return self.cache[args]
+        except KeyError:
+            value = self.f(*args)
+            self.cache[args] = value
+            return value
+        except TypeError:
+            # This can occur if the arguments include a type that can't be used
+            # as a key in a dictionary, such as a list.
+            return self.f(*args)

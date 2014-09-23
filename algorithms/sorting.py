@@ -35,6 +35,7 @@ def elapsed_time(f, *args):
 
 # ------------------------------------------------------------------------------
 # Insertion sort
+# ------------------------------------------------------------------------------
 #
 # Insertion sort has a worst-case running time of $$O(n^2)$$. This occurs when
 # the input sequence is already in reverse sorted order (i.e., decreasing order
@@ -50,6 +51,7 @@ def elapsed_time(f, *args):
 #
 # Insertion sort sorts the array in place, using only a constant amount of
 # additional space.
+#
 # ------------------------------------------------------------------------------
 def insertion_sort(A):
     for j in range(1, len(A)):

@@ -1,0 +1,19 @@
+#!/usr/bin/python
+#
+# Solution to exercise 1.2 from the book _Essential Algorithms_.
+
+import numpy as np
+import matplotlib.pyplot at plt
+
+
+def print_table():
+    # number of algorithm 'steps' per second
+    rate = 1E6
+
+    # run-times in seconds: 1 sec, 1 min, 1 hour, 1 day, 1 week, 1 year
+    periods = [1, 60, 3600, 86400, 604800, 31536000]
+
+    # orders of growth: log n, sqrt n, n, n^2, 2^n, n!
+    def inv_log(s):
+        # i.e., if it takes us lg n instructions to solve a problem of size n,
+        # then given s secs, we can solve a problem of size 2^n.
