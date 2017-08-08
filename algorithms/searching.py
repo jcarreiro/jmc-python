@@ -1,5 +1,24 @@
 # Search algorithms
 
+import math
+
+# ------------------------------------------------------------------------------
+# Binary search
+# ------------------------------------------------------------------------------
+def binary_search(A, v):
+    def binary_search_helper(A, v, j, k):
+        if j >= k:
+            return j # we ran out of values
+        pivot = (k - j) / 2 + j
+        if A[pivot] == v:
+            return pivot
+        elif A[pivot] < v:
+            return binary_search_helper(A, v, pivot + 1, k)
+        else:
+            return binary_search_helper(A, v, j, pivot - 1)
+
+    return binary_search_helper(A, v, 0, len(A) - 1)
+
 # ------------------------------------------------------------------------------
 # The Knuth-Morris-Pratt algorithm for string searching.
 #

@@ -1,3 +1,1 @@
-import algorithms
-import decorators
-import math
+import jmc.algorithms

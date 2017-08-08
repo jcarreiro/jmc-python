@@ -29,7 +29,7 @@ def inv_fact(s):
         n += 1
     return n
 
-def print_table():
+def make_table():
     # number of algorithm 'steps' per second
     rate = 1E6
 
@@ -52,19 +52,45 @@ def print_table():
         ['n!',     inv_fact],                 # factorial
     ]
 
-    print '{0:8s}'.format(''),
-    for t in periods:
-        print '{0:12d}'.format(t),
-    print
-
+    table = [[''] + periods]
     for label, fn in fns:
-        print '{0:8s}'.format(label),
+        row = [label]
         for t in periods:
             try:
-                print '{0:12g}'.format(fn(t * rate)),
+                row.append(fn(t * rate))
             except OverflowError:
-                print '  <overflow>',
+                row.append('  <overflow>')
+        table.append(row)
+    return table
+
+def print_table_text(table):
+    for row in table:
+        for col in row:
+            if type(col) == int:
+                print '{0:12d}'.format(col),
+            elif type(col) == float:
+                print '{0:12g}'.format(col),
+            else:
+                print '{0:12s}'.format(col),
         print
+    print
+
+def print_table_html(table):
+    print '<table>'
+    print '  <th>'
+
+    # assume the first row is a header row
+    for col in table[0]:
+        print '    <td>{0}</td>'.format(col)
+    print '  </th>'
+
+    # now we print the data
+    for row in table[1:]:
+        print '  <tr>'
+        for col in row:
+            print '    <td>{0}</td>'.format(col)
+        print '  </tr>'
+    print '</table>'
 
 # Show the growth in the problem size, for each function, as a function of time
 # in seconds.
@@ -85,4 +111,4 @@ def plot_results():
     plt.show()
 
 if __name__ == '__main__':
-    print_table()
+    print_table_html(make_table())
