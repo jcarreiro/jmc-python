@@ -21,6 +21,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import collections # namedtuple
 import os
 import random
 import sys
@@ -661,9 +662,10 @@ def find_ith_largest_number(A,i):
     return select(A,0,len(A)-1,i)
 
 # ------------------------------------------------------------------------------
-# Graph Problems
+# Graph and Tree Problems
 # ------------------------------------------------------------------------------
-#
+
+# -----------------------------------------------------------------------------
 # Question
 # --------
 # Given an undirected graph G = (V, E), print all possible paths from a given
@@ -732,6 +734,70 @@ def length_of_shortest_path_in_tree(T, a, b):
             n += 1
         return (s, n)
     return helper(T, a, b)[1]
+
+# Class used to represent a node in a binary tree.
+BNode = collections.namedtuple('BNode', ['value', 'left', 'right'])
+
+# ------------------------------------------------------------------------------
+# Question: Given a binary tree, T, find the value of the maximum path in T.
+#
+# Solution: We define a path as a sequence of nodes (a, b, ..., g) s.t. each
+# node in the sequence has an edge connecting it to the previous and the next
+# node in the sequence. We define the value of a path as the sum of the values
+# of the nodes in the sequence, v(p) = \sum n forall n in p.
+#
+# This problem admits an easy recursive solution. Consider an arbitrary node
+# n in the tree. Then there are three possible cases we need to consider:
+#
+#   1. The max path is contained within the node's left subtree.
+#   2. The max path goes through this node.
+#   3. The max path is contained within the node's right subtree.
+# ------------------------------------------------------------------------------
+def max_path_in_tree(t):
+    def helper(t):
+        if t is None:
+            return (0, 0)
+        l_contained, l_through = helper(t.left)
+        r_contained, r_through = helper(t.right)
+        # Our max is one of:
+        #   1. the best path contained in our left subtree
+        #   2. the path through us that continues into our left subtree
+        #   3. the path through us that continues into our right subtree
+        #   4. the best path contained in our right subtree
+        #   5. the best path contained in our left subtree, through us,
+        #      into our right subtree
+        # (whichever is greater).
+        max_contained = max(l_contained,
+                            r_contained,
+                            l_through + r_through + t.value)
+        max_through = max(l_through + t.value, r_through + t.value)
+        return (max_contained, max_through)
+    a, b = helper(t)
+    return max(a, b)
+
+# -----------------------------------------------------------------------------
+# Word Walk
+#
+# Given a starting word, an ending word, and a dictionary, return a list of
+# valid words which transforms the start word into the end word. Successive
+# words in the list can differ by at most one character. All words on the list
+# must be in the provided dictionary.
+#
+# For example, given the start "Walk" and the end "Bard", and assuming the
+# dictionary is a typical dictionary of English words, one possible result
+# could be: ["walk", "balk", "bald", "bard"].
+#
+# Solution:
+#
+# Ref: Interview question used at Facebook (and I swear I saw this in an ad
+# on the T one time...).
+# -----------------------------------------------------------------------------
+def word_walk(start, end, dictionary):
+    pass
+
+# -----------------------------------------------------------------------------
+# Array and List Problems
+# -----------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # Question: Determine if any three integers in an array sum to 0.
@@ -1083,7 +1149,13 @@ def tree_print_by_levels(T):
 #
 # Solution
 # --------
-#
+# We can do this in two passes: one to count the number of closing braces, the
+# other to find the matching open braces and to do the mutations. Note that
+# strings are immutable in Python; by requiring the input be a list, we can do
+# the mutations in-place, so that we use only a constant amount of extra space.
+# If we can't require the input to be a list then this solution requires a
+# linear amount of space (we'd need to turn the string into a list ourselves so
+# that we can mutate it). The resulting solution requires O(n) time.
 #
 # Ref: interview question used at Facebook.
 # ------------------------------------------------------------------------------
@@ -1095,6 +1167,7 @@ def tree_print_by_levels(T):
 def balance_parens_bad(s):
     pass
 
+# This solution is optimal: it uses linear time and constant additional space.
 def balance_parens(s):
     remaining_close = s.count(')') # pass one, count right braces
     nest_count = 0
@@ -1116,4 +1189,118 @@ def balance_parens(s):
         # if we got here, we want to output this character
         s[j] = c
         j += 1
-    return s[:j]
+    return s[:j] # trim list to only output characters
+
+# -----------------------------------------------------------------------------
+# List Problems
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Deep Copy List
+#
+# Question: Given a list of nodes, where each node has a pointer to the next
+# node, and a pointer to another node on the list, return a deep copy of the
+# list. The "extra" pointer in each node may point to any entry in the list,
+# including the node itself, or null.
+#
+# Solution: We proceed from the head, copying nodes one at a time. When we
+# encounter a node, there are 4 possible values for its "extra" pointer:
+#
+#   1) null
+#   2) itself
+#   3) a node we've already copied
+#   4) a node we haven't encountered yet
+#
+# Cases (1) and (2) are trivial. To handle (3) and (4), we keep a map from
+# nodes in the source list to nodes in the destination list. If the node is
+# already present in the map, then we can use the value to set the "extra"
+# pointer. If the node is not present yet, we allocate it and add it to the
+# map.
+#
+# Ref: Interview question used at Facebook.
+# -----------------------------------------------------------------------------
+
+class ExtraNode(object):
+    def __init__(self, data, next_=None, extra=None):
+        self.data = data
+        self.next_ = next_
+        self.extra = extra
+
+def print_extra_list(head):
+    while head:
+        extra_data = None
+        if head.extra:
+            extra_data = head.extra.data
+        print('{0} -> {1}'.format(head.data, extra_data))
+        head = head.next_
+
+def deep_copy_list(head):
+    d = {}
+    prev = None
+    l = None
+    while head:
+        # Copy the node
+        n = None
+        if not head in d:
+            n = ExtraNode(head.data, None, None)
+            d[head] = n
+        else:
+            n = d[head]
+        print('n={}'.format(n))
+
+        # Save a pointer to the head of the copied list.
+        if not l:
+            l = n
+
+        # If we have a previous node, make it point to this one.
+        if prev:
+            prev.next_ = n
+        prev = n
+
+        # Fix up extra pointer.
+        ex = head.extra
+        if ex:
+            if ex in d:
+                n.extra = ex
+            else:
+                n.extra = ExtraNode(ex.data, None, None)
+                d[ex] = n.extra
+
+        head = head.next_
+
+    return l
+
+# ------------------------------------------------------------------------------
+# Has Duplicates
+# ------------------------------------------------------------------------------
+#
+# Question
+# --------
+# Given a list of integers of length N, in which every number is between 1 and
+# N, return True iff the list contains at least one duplicate entry.
+#
+# Solution
+# --------
+# Trivial.
+#
+# Ref: practice interview question used at Facebook.
+# ------------------------------------------------------------------------------
+
+# Linear time, linear space.
+def has_duplicates(x):
+    seen = [False] * (len(x) + 1)
+    for i in x:
+        if seen[i]:
+            return True
+        else:
+            seen[i] = True
+    return False
+
+# Sorting first lets us do this in-place, if we're allowed to modify the original
+# list. This takes O(n ln n) time.
+def has_duplicates_sort(x):
+    x.sort()
+    for i in range(0, len(x) - 1):
+        if x[i] == x[i+1]:
+            return True
+    return False

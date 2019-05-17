@@ -2,6 +2,42 @@ import unittest
 
 from jmc.algorithms.puzzles import *
 
+class TestMaxPathInTree(unittest.TestCase):
+    def test_simple(self):
+        # Given:
+        #
+        #       1
+        #      / \
+        #     2   3
+        #    / \   \
+        #   4   5   6
+        #
+        # The max path is (5, 2, 1, 3, 6), which has the value 17.
+        self.assertEqual(max_path_in_tree(BNode(1,
+                                                BNode(2,
+                                                      BNode(4, None, None),
+                                                      BNode(5, None, None)),
+                                                BNode(3,
+                                                      None,
+                                                      BNode(6, None, None)))),
+                                          17)
+
+    def test_empty(self):
+        self.assertEqual(max_path_in_tree(None), 0)
+
+    def test_single(self):
+        self.assertEqual(max_path_in_tree(BNode(1, None, None)), 1)
+
+    def test_max_path_not_through_root(self):
+        self.assertEqual(max_path_in_tree(BNode(1,
+                                                BNode(2,
+                                                      BNode(400, None, None),
+                                                      BNode(500, None, None)),
+                                                BNode(3,
+                                                      None,
+                                                      BNode(6, None, None)))),
+                         902)
+
 class TestListThreeIntSumToZero(unittest.TestCase):
     def setUp(self):
         self.A = [0, 1, 2, -2, -1]
@@ -46,3 +82,16 @@ class TestBalanceParens(unittest.TestCase):
         self.assertEqual(balance_parens(list("(((((")), list(""))
         self.assertEqual(balance_parens(list("(()()(")), list("(())")) # or list("()()")
         self.assertEqual(balance_parens(list(")(())(")), list("(())"))
+
+class TestDeepCopyList(unittest.TestCase):
+    def testEmpty(self):
+        self.assertEqual(deep_copy_list(None), None)
+
+    def testSingleNode(self):
+        l = ExtraNode(1)
+        m = deep_copy_list(l)
+        self.assertNotNone(m)
+        # todo: more assertions
+
+if __name__ == '__main__':
+    unittest.main()
